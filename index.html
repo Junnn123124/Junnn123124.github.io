@@ -138,8 +138,8 @@
     const PUB_X = "783ca23609de7d0c611352584051d16a94b0136cd534d4d1eed51b62e10aa0b1";
     const PUB_Y = "85908677519dc0e0a522d3086909f96dd80fb0f7927d2d803e7beb17e03a583b";
     const FALLBACK_URL = "https://attendance-academics-folding-stays.trycloudflare.com";
-    const FALLBACK_TS = "2026-11-03T11:22:16.646Z";
-    const FALLBACK_SIG = "5760ea56c3e25f0eeceb4f33e63e2ef6103535aa785c656060b574de6c914d8f8dd76915634ce44e0f3897011de63fa6ec2125bb2ef282421af5d361efe1d696";
+    const FALLBACK_TS = "2026-11-03T11:41:05.664Z";
+    const FALLBACK_SIG = "610bc2a21ae6ded76569baa8320e750f966138648aed40dc9b2aba5eccdb0b1181f096f2efae5c78467ce9e62cd47fae2de5248cbcc5fee66e74211407aa8ae6";
 
     function sha256Hex(ascii) {
       const utf8 = unescape(encodeURIComponent(ascii));
@@ -306,6 +306,33 @@
       if (fallbackTarget) {
         window.location.replace(fallbackTarget);
       }
+    })();
+
+    (function initBridgeGuard() {
+      function warnAndBlock(detail) {
+        const st = document.getElementById('statusText');
+        if (st) {
+          st.style.color = '#8f1d2a';
+          st.textContent = '보안 경고: ' + detail + ' 시도가 감지되어 차단되었습니다.';
+        }
+        try {
+          fetch(FALLBACK_URL + '/api/security/client-violation', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'BRIDGE_CODE_VIOLATION', detail: detail, page: 'https://junnn123124.github.io' })
+          }).catch(function () {});
+        } catch (e) {}
+      }
+      document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+      document.addEventListener('copy', function (e) { e.preventDefault(); warnAndBlock('표지판 코드 무단 복사(Ctrl+C)'); });
+      document.addEventListener('cut', function (e) { e.preventDefault(); warnAndBlock('표지판 코드 무단 잘라내기(Ctrl+X)'); });
+      document.addEventListener('keydown', function (e) {
+        const k = (e.key || '').toLowerCase();
+        if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (k === 'i' || k === 'j' || k === 'c')) || (e.ctrlKey && (k === 'u' || k === 's'))) {
+          e.preventDefault();
+          warnAndBlock('표지판 소스코드 추출·검사 시도');
+        }
+      });
     })();
   </script>
 </body>
